@@ -109,3 +109,8 @@ find-and-replace in the raw HTML. The safe process:
   account), to move ownership off the work account. Apex DNS unchanged (account-agnostic IPs);
   `www` CNAME repointed to `ellehyde.github.io`. Pages, custom domain, and HTTPS all confirmed
   healthy post-transfer. This `CLAUDE.md` added.
+- **2026-07-13** — **Mobile header fix.** On narrow screens the nav links ("the story",
+  "say hello") wrapped to two ragged lines. Added `id="navMenu"`/`id="navCta"` to the nav and a
+  single `@media (max-width:600px)` block (in the template's 2nd `<style>`): links get
+  `white-space:nowrap` + spread evenly, and "get the book" drops to its own full-width row.
+  Desktop unchanged. (First-ever media query on the page — everything else uses fluid `clamp()`.)
