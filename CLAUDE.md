@@ -96,6 +96,30 @@ find-and-replace in the raw HTML. The safe process:
 
 ---
 
+## SEO
+
+**Important architecture gotcha:** the runtime renders by
+`document.documentElement.replaceWith(DOMParser.parseFromString(template))` — it **replaces the
+entire `<html>`** with the decoded `__bundler/template`. So anything in the *raw* `<head>` is
+**discarded once JS runs**. Metadata therefore lives in **two places and must be kept in sync**:
+
+1. **Raw `<head>`** (top of `index.html`, before the `__bundler` scripts) — what non-JS crawlers
+   (Bing, Facebook/iMessage/Slack scrapers) and the pre-render see. Edit directly.
+2. **Template `<head>`** (inside the base64 `__bundler/template`, right after its `viewport`
+   meta) — what Googlebot sees after it renders JS. Edit via the decode/re-encode dance.
+
+What's set in both: `<title>`, meta description, `robots`, `author`, canonical, favicon
+(`/favicon.svg`) + apple-touch-icon (`/cover.jpg`), Open Graph + Twitter tags (image =
+`/og-cover.jpg`, 1200×630), and a JSON-LD `Book` (`application/ld+json`) with author, illustrator,
+audience, and hardcover/paperback `workExample`+`offers`. `<html lang="en">` is set in both too.
+
+Also in the repo root: `cover.jpg` (400×400, extracted from the bundle), `og-cover.jpg` (branded
+1200×630 share card), `favicon.svg`, `robots.txt`, `sitemap.xml`. The `<noscript>` block (raw
+HTML) holds a real content fallback (H1, description, buy links) for non-JS crawlers.
+
+Verify changes with the Google Rich Results Test, Facebook Sharing Debugger, and
+`curl -s https://mymostmostest.com | grep -iE '<title>|og:image|ld\+json'`.
+
 ## History / changelog
 
 - **2026-07-10** — Site stood up on GitHub Pages under the work account
@@ -123,3 +147,9 @@ find-and-replace in the raw HTML. The safe process:
   `<span>` directly (not in a media query), so it applies on every screen size.
 - **2026-07-13** — **"say hello" blurb copy.** Trimmed the opener from "want something covered,
   or just want to say hi?" → "want to say hi?" (rest of the paragraph unchanged).
+- **2026-07-14** — **SEO Phase A + C.** Replaced `<title>Bundled Page</title>` with a real title
+  and added meta description, canonical, `<html lang>`, Open Graph + Twitter tags, JSON-LD `Book`
+  structured data, favicon, and a crawlable `<noscript>` fallback — in **both** the raw `<head>`
+  and the template `<head>` (see the SEO section for why). Added `robots.txt`, `sitemap.xml`,
+  `cover.jpg`, `og-cover.jpg`, `favicon.svg`. Pending: Phase B (retailer buttons + `Offer`s once
+  Elle sends Amazon/B&N/Walmart/Bookshop URLs) and Phase D (submit to Google Search Console + Bing).
