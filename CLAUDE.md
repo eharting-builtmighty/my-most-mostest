@@ -151,5 +151,11 @@ Verify changes with the Google Rich Results Test, Facebook Sharing Debugger, and
   and added meta description, canonical, `<html lang>`, Open Graph + Twitter tags, JSON-LD `Book`
   structured data, favicon, and a crawlable `<noscript>` fallback — in **both** the raw `<head>`
   and the template `<head>` (see the SEO section for why). Added `robots.txt`, `sitemap.xml`,
-  `cover.jpg`, `og-cover.jpg`, `favicon.svg`. Pending: Phase B (retailer buttons + `Offer`s once
-  Elle sends Amazon/B&N/Walmart/Bookshop URLs) and Phase D (submit to Google Search Console + Bing).
+  `cover.jpg`, `og-cover.jpg`, `favicon.svg`.
+- **2026-07-14** — **SEO Phase D.** Verified the site in Google Search Console (URL-prefix
+  property, HTML-file method → `googlea86823cf66158b58.html` in repo root — do not delete).
+- **2026-07-14** — **SEO Phase B.** Added a white "also available at these very fine retailers"
+  section (`id="retailers"`) above the footer with buttons for Amazon, Barnes & Noble, Walmart,
+  Bookshop.org (styled pills w/ brand-colored dots, not official logos — linking to the hardcover,
+  ISBN 9798295863806). Updated the `Book` JSON-LD (both raw + template copies) with the hardcover
+  ISBN/gtin13 and 5 retailer `Offer`s.
