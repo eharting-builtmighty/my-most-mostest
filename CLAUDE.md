@@ -121,3 +121,5 @@ find-and-replace in the raw HTML. The safe process:
 - **2026-07-13** — **Logo recolor (all viewports).** Header logo changed from "mostest" blue →
   "**most**" blue + "mostest" black, matching the hero title and the book. Edits the logo
   `<span>` directly (not in a media query), so it applies on every screen size.
+- **2026-07-13** — **"say hello" blurb copy.** Trimmed the opener from "want something covered,
+  or just want to say hi?" → "want to say hi?" (rest of the paragraph unchanged).
