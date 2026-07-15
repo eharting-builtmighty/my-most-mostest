@@ -183,3 +183,12 @@ them, which is why we use a `/preview/` path instead.
   ISBN/gtin13 and 5 retailer `Offer`s.
 - **2026-07-14** — **Added `/preview/` staging flow** (`preview/index.html`, a `noindex` copy) for
   reviewing changes on real devices before promoting to root. See the Preview section above.
+- **2026-07-15** — **Buy links → Amazon + email signup + copy.** All CTAs now point to Amazon
+  (header "get the book" + hero primary → paperback `B0H13DP6TN`; hero "or the hardcover" →
+  `B0H15KS15S`). "Other retailers" reordered to Amazon(PB), Barnes & Noble, Bookshop.org, Walmart
+  (all paperback, ISBN 9798295863783). IngramSpark removed everywhere (site + JSON-LD). Added a
+  yellow **email signup bar** (`id="signup"`) between `story` and `favorites` — reuses the
+  component pattern (`listEmail`/`listSubbed`/`subscribeList`), **capturing via FormSubmit to
+  info@ as an interim; TODO: swap to MailerLite** once Elle creates the account + sends the form
+  endpoint (one-line change in `subscribeList`). Trimmed the "say hello" blurb, removed the
+  vestigial `signup`/`subscribe` stub, and **removed all em-dashes** from copy (hyphens instead).
