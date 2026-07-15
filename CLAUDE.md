@@ -120,6 +120,28 @@ HTML) holds a real content fallback (H1, description, buy links) for non-JS craw
 Verify changes with the Google Rich Results Test, Facebook Sharing Debugger, and
 `curl -s https://mymostmostest.com | grep -iE '<title>|og:image|ld\+json'`.
 
+## Preview / staging workflow
+
+To review a change on a real device **before** it goes live, use the preview URL:
+**https://mymostmostest.com/preview/** (served from `preview/index.html` in the repo root).
+
+It's a `noindex, nofollow` copy (robots meta set in **both** the raw and template `<head>`) with
+`canonical` still pointing at the production root, so it never competes with the real page in
+search. Because it's on the **same domain**, the root-absolute asset paths (`/cover.jpg`,
+`/favicon.svg`, `/og-cover.jpg`) resolve correctly — a separate project-Pages repo would break
+them, which is why we use a `/preview/` path instead.
+
+**Flow for a candidate change:**
+1. Apply the change to a working copy and write it to `preview/index.html`. **Keep the
+   `content="noindex, nofollow"` robots meta in both heads** — don't let an `index, follow`
+   version land in `/preview/`.
+2. Commit + push. Review at `https://mymostmostest.com/preview/` (hard-refresh; the 10 MB file
+   caches hard).
+3. Once approved, apply the **same** change to the root `index.html` (with `index, follow`) and
+   deploy to root.
+4. `preview/index.html` just holds the last-previewed build between reviews; resync it from the
+   current production `index.html` when starting a fresh preview.
+
 ## History / changelog
 
 - **2026-07-10** — Site stood up on GitHub Pages under the work account
@@ -159,3 +181,5 @@ Verify changes with the Google Rich Results Test, Facebook Sharing Debugger, and
   Bookshop.org (styled pills w/ brand-colored dots, not official logos — linking to the hardcover,
   ISBN 9798295863806). Updated the `Book` JSON-LD (both raw + template copies) with the hardcover
   ISBN/gtin13 and 5 retailer `Offer`s.
+- **2026-07-14** — **Added `/preview/` staging flow** (`preview/index.html`, a `noindex` copy) for
+  reviewing changes on real devices before promoting to root. See the Preview section above.
