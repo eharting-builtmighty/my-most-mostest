@@ -59,6 +59,35 @@ There is also a local working copy at `~/Desktop/Claude Projects/my most mostest
 
 ---
 
+## Analytics (Google Analytics 4)
+
+- **Tool:** GA4, same Google account as Search Console. **Measurement ID: `G-Q11KK8BV23`**
+  (property "My Most Mostest", Web data stream "Website"). Enhanced Measurement is ON, which
+  auto-captures outbound clicks and general behavior.
+- **Where the tag lives:** the standard `gtag.js` snippet is in the **template `<head>`** only
+  (right after the `viewport` meta), *not* the raw `<head>`. It must be in the template because
+  the runtime `replaceWith`-es the whole `<html>`, and the runtime re-creates every `<script>`
+  in the parsed template (copies attrs + `textContent`, re-inserts, awaits `src` loads) — so
+  template `<head>` scripts **do** execute after render. One copy only → no double-counting.
+- **`retailer_click` custom event.** A delegated capture-phase `click` listener (inline script,
+  same template `<head>` block) fires an explicit event on any outbound retailer link, giving
+  clean per-store labels independent of Enhanced Measurement. Schema:
+  `gtag('event','retailer_click',{retailer, link_url, link_text, location})`
+  - `retailer` — derived from link host: Amazon / Barnes & Noble / Bookshop.org / Walmart.
+  - `link_url` — the full destination href. `link_text` — the trimmed anchor text (≤100 chars).
+  - `location` — the page section: `header` (nav CTA), `hero` (the `#buy` section), or
+    `retailers` (the `#retailers` section).
+  - Retailer URLs themselves are unchanged (GA4 records the destination). To read: GA4 →
+    Engagement → Events → `retailer_click`, broken down by `retailer`, for "which store wins".
+- **UTM convention (inbound links only).** For links Elle *shares* pointing back to the site:
+  `https://mymostmostest.com/?utm_source=SOURCE&utm_medium=MEDIUM&utm_campaign=CAMPAIGN`
+  (e.g. `?utm_source=instagram&utm_medium=social&utm_campaign=bio`). GA4 attributes these under
+  Acquisition. **Never** put UTMs on the retailer buttons — those stores ignore `utm_*`.
+- **Privacy:** default measurement only, no PII. Running without a consent banner (common US
+  practice); a lightweight EU/UK consent banner can be added later if desired (not built).
+
+---
+
 ## How to edit the site safely
 
 **Content/text changes live inside the base64 `__bundler/template` block**, so you can't just
@@ -192,3 +221,13 @@ them, which is why we use a `/preview/` path instead.
   info@ as an interim; TODO: swap to MailerLite** once Elle creates the account + sends the form
   endpoint (one-line change in `subscribeList`). Trimmed the "say hello" blurb, removed the
   vestigial `signup`/`subscribe` stub, and **removed all em-dashes** from copy (hyphens instead).
+- **2026-07-16** — **Analytics: GA4 + `retailer_click` tracking.** Added the `gtag.js` snippet
+  (Measurement ID `G-Q11KK8BV23`) plus a delegated outbound-click listener to the **template
+  `<head>`** (after the `viewport` meta), in both root (`index, follow`) and `preview/`
+  (`noindex, nofollow`) copies. The listener fires a `retailer_click` event
+  (`{retailer, link_url, link_text, location}`) on Amazon/B&N/Bookshop.org/Walmart links for clean
+  per-store reporting; Enhanced Measurement's auto outbound-click stays on as a backstop. Verified
+  headlessly with jsdom (config fires, all 7 retailer anchors fire correct `retailer_click`s with
+  right labels + section `location`, non-retailer links stay silent). See the new Analytics
+  section. Follow-ups for Elle: (1) GA4 Admin → Product links → link Search Console;
+  (2) verify live via GA4 Realtime after deploy.
