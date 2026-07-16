@@ -56,6 +56,11 @@ There is also a local working copy at `~/Desktop/Claude Projects/my most mostest
 - Posts inline (AJAX) to **FormSubmit**: `https://formsubmit.co/ajax/info@mymostmostest.com`.
   No account or API key. The submission lands in the `info@` inbox (and forwards on).
 - Implemented in the `sendContact` handler inside the template block.
+- **Success UX (mirrors the signup bar):** on submit the form is **replaced** by the thank-you
+  (`<sc-if notSent>` wraps the form; `<sc-if sent>` shows the confirmation) and the fields are
+  cleared. A **"send another message"** button (styled like the "send it" CTA) fires
+  `resetContact`, which sets `sent:false` and clears fields to bring the form back. `resetContact`
+  and `notSent: !this.state.sent` are exposed in the component's render context alongside `sent`.
 
 ---
 
@@ -250,3 +255,11 @@ them, which is why we use a `/preview/` path instead.
   the extracted handler bodies with stubbed `this`/`fetch`/`gtag` (events fire on submit, behavior
   preserved, empty-email fires nothing). Documented the 3 custom dimensions to register
   (`Retailer`, `Click location`, `Link text`).
+- **2026-07-16** — **Contact-form success UX + removed heart emojis.** The "say hello" form
+  previously showed a thank-you *above* a form that stayed put, so a send felt like nothing
+  happened. Reworked it to mirror the signup bar: on submit the form is replaced by the thank-you
+  and a **"send another message"** brand button (fires `resetContact`), fields cleared. Added
+  `notSent`/`resetContact` to the render context and wrapped the `<form>` in `<sc-if notSent>`.
+  Removed all three 💛 yellow-heart emojis (signup confirmation, contact thank-you, contact
+  blurb). Verified: form-swap/reset behavior via handler-eval, integrity (one `</script>`, zero
+  hearts), and on a real device via `/preview/` before promoting to root.
