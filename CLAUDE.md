@@ -249,8 +249,7 @@ them, which is why we use a `/preview/` path instead.
   (all paperback, ISBN 9798295863783). IngramSpark removed everywhere (site + JSON-LD). Added a
   yellow **email signup bar** (`id="signup"`) between `story` and `favorites` — reuses the
   component pattern (`listEmail`/`listSubbed`/`subscribeList`), **capturing via FormSubmit to
-  info@ as an interim; TODO: swap to MailerLite** once Elle creates the account + sends the form
-  endpoint (one-line change in `subscribeList`). Trimmed the "say hello" blurb, removed the
+  info@ as an interim** (~~TODO: swap to MailerLite~~ **done 2026-07-23, see below**). Trimmed the "say hello" blurb, removed the
   vestigial `signup`/`subscribe` stub, and **removed all em-dashes** from copy (hyphens instead).
 - **2026-07-16** — **Analytics: GA4 + `retailer_click` tracking.** Added the `gtag.js` snippet
   (Measurement ID `G-Q11KK8BV23`) plus a delegated outbound-click listener to the **template
@@ -290,3 +289,15 @@ them, which is why we use a `/preview/` path instead.
   Policy"** footer link in the template (both root + `preview/`, via the decode/re-encode dance).
   Decided against a cookie-consent banner for now (US audience; see Privacy bullet). Deployed
   `/preview/` first, then root.
+- **2026-07-23** — **Signup bar wired to MailerLite (info@ kept as backup).** `subscribeList` now
+  POSTs the email to the MailerLite embedded-form endpoint
+  (`assets.mailerlite.com/jsonp/2529575/forms/193815162362267647/subscribe`, fields `fields[email]`
+  + `ml-submit=1` + `anticsrf=true`, `mode:'no-cors'` fire-and-forget) **before** the existing
+  FormSubmit→info@ call, which stays as a live notification + safety-net copy. MailerLite is
+  **single opt-in** with a branded welcome-email automation (group "Website signups"); confirmation
+  copy updated to "you're on the list! a hello is on its way." The `email_signup` GA event is
+  unchanged. Verified: handler-eval (both destinations hit, event fires, empty-email no-ops) +
+  integrity, then a real signup on `/preview/` confirmed the subscriber landed in MailerLite before
+  promoting to root. To drop the info@ copy later, remove the MailerLite-adjacent FormSubmit line in
+  `subscribeList`. MailerLite account owned by Elle; requires a valid postal address in the footer
+  (CAN-SPAM) — using a PO box, not a home address.
